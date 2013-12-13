@@ -2,50 +2,30 @@
 
 class Coordenades(object):
   def __init__(self,nx=0,ny=0):
-    self.x = nx
-    self.y = ny
+    self._x = nx
+    self._y = ny
   def __add__(self,other):
-    return Coordenades(self.x + other.x, self.y + other.y)
+    return Coordenades(self._x + other._x, self._y + other._y)
   def __eq__(self, other):
-    return self.x == other.x and self.y == other.y
-  def coordenades(self):
-    return (self.x,self.y)
-  def coordX(self):
-    return self.x
-  def coordY(self):
-    return self.y
+    return self._x == other._x and self._y == other._y
 
-class Posicio (object):
+class Posicio (Coordenades):
     def __init__(self,nx=0,ny=0):
-      self.coord = Coordenades(nx,ny)
-    def __add__(self,other):
-      return self.coord + other.coord
+      Coordenades.__init__(self,nx,ny)
     def posicio(self):
-        return self.coord.coordenades()
+        return (self._x,self._y)
     def posx(self):
-        return self.coord.coordX()
+        return self._x
     def posy(self):
-        return self.coord.coordY()
+        return self._y
 
-class Velocitat (object):
+class Velocitat (Coordenades):
     def __init__(self,nx=0,ny=0):
-      self.coord = Coordenades(nx,ny)
-    def __add__(self,other):
-      return self.coord + other.coord
+      Coordenades.__init__(self,nx,ny)
     def velocitat(self):
-        return self.coord.coordenades()
+        return (self._x,self._y)
     def velx(self):
-        return self.coord.coordX()
+        return self._x
     def vely(self):
-        return self.coord.coordY()
+        return self._y
 
-class Element (object):
-    def __init__(self, x=0, y=0, vx=0, vy=0):
-        self.pos = Posicio(x,y)
-        self.vel = Velocitat(vx,vy)
-    def posicio(self):
-      return self.pos.posicio()
-    def velocitat(self):
-      return self.vel.velocitat()
-    def mou(self):
-        self.pos += self.vel
