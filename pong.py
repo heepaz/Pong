@@ -1,7 +1,28 @@
 #! /usr/bin/python3
 import pygame, sys
-from configuracio import c
+from configuracio import *
 from pygame.locals import *
+from sprite import *
+
+class Imatges (object):
+  def __init__(self):
+    self.background = None
+    self.images = {}
+
+  def new_image(self, file_name, name, x=0, y=0, visible=True):
+    self.images[name] = Sprite(file_name,x,y,visible)
+
+  def new_background(self, file_name):
+    self.background = Sprite(file_name,0,0,True)
+
+  def draw_all(self):
+    if self.background != None:
+      self.background.draw()
+      for image in self.images.values():
+        image.draw() 
+
+i = Imatges()
+  
 
 class Posicio (object):
     def __init__(self,nx=0,ny=0):
@@ -36,18 +57,17 @@ class Element (Posicio,Velocitat):
 
 class Pong (object):
     def inicia(self):
-      pygame.init()
-      c.screen = pygame.display.set_mode((c.WIDTH, c.HEIGHT), 0, 32)
+       i.new_image("Imatges/ball.png","sprite",20,30,True) 
+       i.new_background("Imatges/fons.jpg")
+       i.new_image("Imatges/pad.jpg","paddle",0,0,False)
 
     def handleEvents(self):
       for event in pygame.event.get():
         if event.type == QUIT:
-          quit()
+          pygame.quit()
 
     def render(self):
-      c.screen.blit(c.background, (0, 0))
-
-
+      i.draw_all()
       pygame.display.update()
 
     def mainLoop(self):
