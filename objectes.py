@@ -1,4 +1,5 @@
 import pygame
+import random
 from coordenades import *
 
 def singleton(class_):
@@ -25,13 +26,11 @@ class Pong (object):
 # Creem una instància de Pong per tal que la conegui la classe Pala
 p = Pong()
 
-class Pala(object):
+class Element (object):
   def __init__(self):
-    self._img = pygame.image.load("Imatges/pad.jpg")
-    pos_x = p.WIDTH - self._img.get_width()/2
-    pos_y = 0 
-    self.posicio = Coordenades(pos_x, self._img.get_height()/2)
-    self.velocitat = Coordenades(0,0)
+    self._img = pygame.image.load("Imatges/Default.png")
+    self.posicio = Coordenades(0,0)
+    self.velocitat = Coordenades(0,0) 
 
   def pos(self):
     return self.posicio.x, self.posicio.y
@@ -51,24 +50,13 @@ class Pala(object):
     return self.y() - self._img.get_height()/2
   def bottom(self):
     return self.y() + self._img.get_height()/2
-
-  def mou_amunt(self):
-    self.velocitat = Coordenades(0,-1)
-  def mou_avall(self):
-    self.velocitat = Coordenades(0,1)
-  def atura(self):
-    self.velocitat = Coordenades(0,0)
+  def right(self):
+    return self.x() + self._img.get_width()/2
+  def left(self):
+    return self.x() - self._img.get_width()/2
 
   def actualitza(self):
-    h_min = self._img.get_height()/2  
-    h_max = p.HEIGHT - self._img.get_height()/2
-
-    if self.top() < 0:
-      self.posicio.y = h_min
-    elif self.bottom() > p.HEIGHT:
-      self.posicio.y = h_max
-    else:
-      self.posicio += self.velocitat
+    self.posicio += self.velocitat
 
   def pinta(self, surface):
     offset_x = - self._img.get_width()/2
@@ -80,4 +68,96 @@ class Pala(object):
     surface.blit(self._img, (pos_x,pos_y))
 
 
+def collision(self,other):
+  if self.right() >= other.left() and (self.top() >= other.bottom() or self.bottom() <= other.top()):
+    print("Dreta")
+    return True
+  elif self.left() <= other.right() and (self.top() >= other.bottom() or self.bottom() <= other.top()): 
+    print("Esquerra")
+    return True
+  else:
+    return False
+
+class Pala(Element):
+  def __init__(self, x=None, y=None):
+    Element.__init__
+    self._img = pygame.image.load("Imatges/pad.jpg")
+    self.amunt = False
+    self.avall = False
+    if x == None:
+      pos_x = p.WIDTH - self._img.get_width()/2
+    else:
+      pos_x = x
+    if y == None:
+      pos_y = 0 
+    else:
+      pos_y = y
+    self.posicio = Coordenades(pos_x, self._img.get_height()/2)
+    self.velocitat = Coordenades(0,0)
+
+  def mou_amunt(self):
+    self.amunt = True
+    #self.velocitat = Coordenades(0,-1)
+  def mou_avall(self):
+    self.avall = True
+    #self.velocitat = Coordenades(0,1)
+  def atura_amunt(self):
+    self.amunt = False
+  def atura_avall(self):
+    self.avall = False
+
+  def actualitza(self):
+    h_min = self._img.get_height()/2  
+    h_max = p.HEIGHT - self._img.get_height()/2
+
+    if self.top() < 0:
+      self.posicio.y = h_min
+      self.velocitat = Coordenades(0,0)
+    elif self.bottom() > p.HEIGHT:
+      self.posicio.y = h_max
+      self.velocitat = Coordenades(0,0)
+    elif self.amunt == False and self.avall == False:
+      self.velocitat = Coordenades(0,0)
+    elif self.amunt == True and self.avall == True:
+      self.velocitat = Coordenades(0,0)
+    elif self.amunt == True:
+      self.velocitat = Coordenades(0,-1)
+    elif self.avall == True:
+      self.velocitat = Coordenades(0,1)
+    self.posicio += self.velocitat
+
+class Pilota (Element):
+  def __init__(self, x=None, y=None, vx=None, vy=None):
+    self._img = pygame.image.load("Imatges/ball.png")
+    if x == None or y == None:
+      pos_x = p.WIDTH/2
+      pos_y = p.HEIGHT/2
+    else:
+      pos_x = x
+      pos_y = y
+    if vx == None or vy == None:
+      pos_vx = 0.5 #random.randrange(1,3)
+      pos_vy = 0.5 #random.randrange(1,3)
+    else:
+      pos_vx = vx
+      pos_vy = vy
+
+    self.posicio = Coordenades(pos_x, pos_y)
+    self.velocitat = Coordenades(pos_vx, pos_vy)
+
+  def actualitza(self):
+    for nom, elem in p.objectes.items():
+      if nom != "pilota":
+        if collision(self,elem):
+          self.velocitat.x *= -1
+    if self.top() <= 0:
+      self.velocitat.y *= -1
+    elif self.bottom() >= p.HEIGHT:
+      self.velocitat.y *= -1
+    self.posicio += self.velocitat
+
+
+
 p.objectes["pala"] = Pala()
+p.objectes["palaC"] = Pala(4,0)
+p.objectes["pilota"] = Pilota()
