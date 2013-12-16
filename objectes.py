@@ -28,41 +28,56 @@ p = Pong()
 class Pala(object):
   def __init__(self):
     self._img = pygame.image.load("Imatges/pad.jpg")
-    pos_x = p.WIDTH - self._img.get_width()
-    pos_y = self._img.get_height()/2 
-    self._pos = Posicio(pos_x, pos_y)
-    print(">>>> tipus de self._pos",type(self._pos),"<<<<")
-    self._vel = Velocitat(0,0)
+    pos_x = p.WIDTH - self._img.get_width()/2
+    pos_y = 0 
+    self.posicio = Coordenades(pos_x, self._img.get_height()/2)
+    self.velocitat = Coordenades(0,0)
 
-  def get_pos(self):
-    print("!!!!!! tipus de self._pos", type(self._pos))
-    print("!!!!!! tipus de self._vel", type(self._vel))
-    return self._pos.posicio()
-  def get_pos_x(self):
-    return self._pos.posx()
-  def get_pos_y(self):
-    return self._pos.posy()
+  def pos(self):
+    return self.posicio.x, self.posicio.y
+  def x(self):
+    return self.posicio.x
+  def y(self):
+    return self.posicio.y
 
-  def get_vel(self):
-    return self._vel.velocitat()
-  def get_vel_x(self):
-    return self._vel.velx()
-  def get_vel_y(self):
-    return self._vel.vely()
+  def vel(self):
+    return self.velocitat.x, self.velocitat.y
+  def vx(self):
+    return self.velocitat.x
+  def vy(self):
+    return self.velocitat.y
+
+  def top(self):
+    return self.y() - self._img.get_height()/2
+  def bottom(self):
+    return self.y() + self._img.get_height()/2
 
   def mou_amunt(self):
-    print("Ens movem amunt!")
-    self._vel = Velocitat(0,-1)
+    self.velocitat = Coordenades(0,-1)
   def mou_avall(self):
-    self._vel = Velocitat(0,1)
+    self.velocitat = Coordenades(0,1)
   def atura(self):
-    self._vel = Velocitat(0,0)
+    self.velocitat = Coordenades(0,0)
 
   def actualitza(self):
-    self._pos = self._pos + self._vel
+    h_min = self._img.get_height()/2  
+    h_max = p.HEIGHT - self._img.get_height()/2
+
+    if self.top() < 0:
+      self.posicio.y = h_min
+    elif self.bottom() > p.HEIGHT:
+      self.posicio.y = h_max
+    else:
+      self.posicio += self.velocitat
 
   def pinta(self, surface):
-    surface.blit(self._img, self.get_pos())
+    offset_x = - self._img.get_width()/2
+    offset_y = - self._img.get_height()/2
+
+    pos_x = self.x() + offset_x
+    pos_y = self.y() + offset_y
+
+    surface.blit(self._img, (pos_x,pos_y))
 
 
 p.objectes["pala"] = Pala()
