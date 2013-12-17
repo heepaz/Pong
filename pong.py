@@ -49,12 +49,13 @@ def fites():
     print(p.puntsL, p.puntsR)
 
 def main():
-  p = inicia()
-  while True:
+  inicia()
+  while p.quit == False:
     esdeveniments()
     actualitza()
     fites()
     pinta()
+  pygame.quit()
 
 
 if __name__ == "__main__":

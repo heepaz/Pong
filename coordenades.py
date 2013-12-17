@@ -10,7 +10,9 @@ class Coordenades(object):
     return self.x == other.x and self.y == other.y
   def __truediv__(self,other):
     if type(other) == int:
-      return Coordenades(self.x * other, self.y * other)
-  def __mul__(self,other):
-    if type(other) == int:
       return Coordenades(self.x / other, self.y / other)
+  def __mul__(self,other):
+    if type(other) == int or type(other) == float:
+      return Coordenades(self.x * other, self.y * other)
+  def coord(self):
+    return self.x, self.y

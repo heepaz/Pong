@@ -8,8 +8,8 @@ def printu():
   print("Has pitjat la u!")
 
 key_down_opts = {
-    K_q : pygame.quit,
-    K_ESCAPE : pygame.quit,
+    K_q : p.toggle_quit,
+    K_ESCAPE : p.toggle_quit,
     K_u : printu,
     K_UP : p.objectes["palaR"].mou_amunt,
     K_DOWN : p.objectes["palaR"].mou_avall,

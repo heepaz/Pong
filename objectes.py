@@ -1,4 +1,5 @@
 import pygame
+import math as m
 import random
 from coordenades import *
 
@@ -30,6 +31,14 @@ class Pong (object):
     self.puntsL = 0
 
     self.font = pygame.font.SysFont("Arial", 20)
+
+    self.quit = False
+
+  def toggle_quit(self):
+    if self.quit:
+      self.quit = False
+    else:
+      self.quit = True
 
   def dt(self):
     self.oldtime = self.newtime
@@ -101,10 +110,8 @@ class Pala(Element):
 
   def mou_amunt(self):
     self.amunt = True
-    #self.velocitat = Coordenades(0,-1)
   def mou_avall(self):
     self.avall = True
-    #self.velocitat = Coordenades(0,1)
   def atura_amunt(self):
     self.amunt = False
   def atura_avall(self):
@@ -125,9 +132,9 @@ class Pala(Element):
     elif self.amunt == True and self.avall == True:
       self.velocitat = Coordenades(0,0)
     elif self.amunt == True:
-      self.velocitat = Coordenades(0,-1)
+      self.velocitat = Coordenades(0,-2)
     elif self.avall == True:
-      self.velocitat = Coordenades(0,1)
+      self.velocitat = Coordenades(0,2)
     self.posicio += self.velocitat/5 * p.DT
 
 class Pilota (Element):
@@ -167,7 +174,10 @@ class Pilota (Element):
     for nom, elem in p.objectes.items():
       if nom != "pilota":
         if self.collision(elem, nom):
-          self.velocitat.x *= -1.1
+          d = -(elem.posicio.y - self.posicio.y) / (self.bottom()-self.top())
+          vx = -self.velocitat.x*1.05
+          vy = d
+          self.velocitat = Coordenades(vx,vy)
     if self.top() <= 0:
       self.velocitat.y *= -1
     elif self.bottom() >= p.HEIGHT:
@@ -180,6 +190,16 @@ class Pilota (Element):
     self.velocitat.x = random.randrange(12, 24) * 0.050
     self.velocitat.y = random.randrange(5, 18) * 0.050
 
+  def pinta(self, surface):
+    offset_x = - self._img.get_width()/2
+    offset_y = - self._img.get_height()/2
+
+    pos_x = self.x() + offset_x
+    pos_y = self.y() + offset_y
+
+    surface.blit(self._img, (pos_x,pos_y))
+    suma = (self.posicio+self.velocitat*10).coord()
+    #pygame.draw.line(p.screen,(255,0,0),self.pos(),suma)
 
 
 
