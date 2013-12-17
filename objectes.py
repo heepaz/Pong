@@ -21,6 +21,20 @@ class Pong (object):
     # Els objectes s'afegeixen al final del fitxer, quan ja s'han definit
     # les altres classes
     self.objectes = {}
+
+    self.newtime = pygame.time.get_ticks()
+    self.oldtime = self.newtime + 5
+    self.DT = 5
+
+    self.puntsR = 0
+    self.puntsL = 0
+
+    self.font = pygame.font.SysFont("Arial", 20)
+
+  def dt(self):
+    self.oldtime = self.newtime
+    self.newtime = pygame.time.get_ticks()
+    self.DT = self.newtime - self.oldtime
   
 
 # Creem una instància de Pong per tal que la conegui la classe Pala
@@ -114,7 +128,7 @@ class Pala(Element):
       self.velocitat = Coordenades(0,-1)
     elif self.avall == True:
       self.velocitat = Coordenades(0,1)
-    self.posicio += self.velocitat
+    self.posicio += self.velocitat/5 * p.DT
 
 class Pilota (Element):
   def __init__(self, x=None, y=None, vx=None, vy=None):
@@ -126,8 +140,8 @@ class Pilota (Element):
       pos_x = x
       pos_y = y
     if vx == None or vy == None:
-      pos_vx = 0.5 #random.randrange(1,3)
-      pos_vy = 0.5 #random.randrange(1,3)
+      pos_vx = random.randrange(12, 24) * 0.050
+      pos_vy = random.randrange(5, 18) * 0.050
     else:
       pos_vx = vx
       pos_vy = vy
@@ -158,7 +172,14 @@ class Pilota (Element):
       self.velocitat.y *= -1
     elif self.bottom() >= p.HEIGHT:
       self.velocitat.y *= -1
-    self.posicio += self.velocitat
+    self.posicio += self.velocitat/5 * p.DT
+
+  def reinicia(self):
+    self.posicio.x = p.WIDTH/2
+    self.posicio.y = p.HEIGHT/2
+    self.velocitat.x = random.randrange(12, 24) * 0.050
+    self.velocitat.y = random.randrange(5, 18) * 0.050
+
 
 
 
