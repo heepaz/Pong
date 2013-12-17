@@ -68,16 +68,6 @@ class Element (object):
     surface.blit(self._img, (pos_x,pos_y))
 
 
-def collision(self,other):
-  if self.right() >= other.left() and (self.top() >= other.bottom() or self.bottom() <= other.top()):
-    print("Dreta")
-    return True
-  elif self.left() <= other.right() and (self.top() >= other.bottom() or self.bottom() <= other.top()): 
-    print("Esquerra")
-    return True
-  else:
-    return False
-
 class Pala(Element):
   def __init__(self, x=None, y=None):
     Element.__init__
@@ -145,11 +135,25 @@ class Pilota (Element):
     self.posicio = Coordenades(pos_x, pos_y)
     self.velocitat = Coordenades(pos_vx, pos_vy)
 
+  def collision(self, other, nom):
+    if nom == "palaR":
+      if self.right() >= other.left() and other.top() <= self.posicio.y <= other.bottom():
+        return True
+      else:
+        return False
+    elif nom == "palaL":
+      if self.left() <= other.right() and other.top() <= self.posicio.y <= other.bottom():
+        return True
+      else:
+        return False
+    else:
+      return False
+
   def actualitza(self):
     for nom, elem in p.objectes.items():
       if nom != "pilota":
-        if collision(self,elem):
-          self.velocitat.x *= -1
+        if self.collision(elem, nom):
+          self.velocitat.x *= -1.1
     if self.top() <= 0:
       self.velocitat.y *= -1
     elif self.bottom() >= p.HEIGHT:
@@ -158,6 +162,6 @@ class Pilota (Element):
 
 
 
-p.objectes["pala"] = Pala()
-p.objectes["palaC"] = Pala(4,0)
+p.objectes["palaR"] = Pala()
+p.objectes["palaL"] = Pala(4,0)
 p.objectes["pilota"] = Pilota()
